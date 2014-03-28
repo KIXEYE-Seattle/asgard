@@ -149,6 +149,7 @@ import groovy.transform.Canonical
         if (instancePriceType == InstancePriceType.SPOT) {
             spotPrice = spotInstanceRequestService.recommendSpotPrice(userContext, instanceType)
         }
+
         new CreateLaunchConfigurationRequest(
                 launchConfigurationName: launchConfigurationName,
                 imageId: imageId,
