@@ -162,7 +162,8 @@ import groovy.transform.Canonical
                 instanceMonitoring: instanceMonitoring,
                 spotPrice: spotPrice,
                 iamInstanceProfile: iamInstanceProfile,
-                ebsOptimized: ebsOptimized
+                ebsOptimized: ebsOptimized,
+                associatePublicIpAddress: true
         )
     }
 
