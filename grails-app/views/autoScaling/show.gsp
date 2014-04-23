@@ -132,8 +132,12 @@
           <td class="value'}" id="terminateStatus">${terminateStatus}</td>
         </tr>
         <tr class="prop">
-          <td class="name">Adding to Load Balancer:</td>
-          <td class="value'}" id="addToLoadBalancerStatus">${addToLoadBalancerStatus}</td>
+            <td class="name">Adding to Load Balancer:</td>
+            <td class="value'}" id="addToLoadBalancerStatus">${addToLoadBalancerStatus}</td>
+        </tr>
+        <tr class="prop">
+            <td class="name">Associate Public IP Address:</td>
+            <td class="value'}" id="associatePublicIpAddress">${associatePublicIpAddress}</td>
         </tr>
         <g:if test="${isChaosMonkeyActive}">
           <tr class="prop">

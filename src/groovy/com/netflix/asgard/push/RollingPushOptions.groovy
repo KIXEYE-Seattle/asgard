@@ -24,6 +24,7 @@ final class RollingPushOptions {
     String iamInstanceProfile
     String spotPrice
     String keyName
+    Boolean associatePublicIpAddress;
 
     Boolean shouldWaitAfterBoot() {
         Math.max(0, common.afterBootWait) && !common.checkHealth

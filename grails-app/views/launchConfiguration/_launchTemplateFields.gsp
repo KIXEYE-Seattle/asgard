@@ -24,8 +24,12 @@
   </td>
 </tr>
 <tr class="prop">
-  <td class="name">SSH Key:</td>
-  <td class="value">${launchTemplate.keyName}</td>
+    <td class="name">SSH Key:</td>
+    <td class="value">${launchTemplate.keyName}</td>
+</tr>
+<tr class="prop">
+    <td class="name">Associate Public IP Address:</td>
+    <td class="value">${launchTemplate.associatePublicIpAddress? 'Yes' : 'No'}</td>
 </tr>
 <tr class="prop">
   <td class="name">Security Groups:</td>

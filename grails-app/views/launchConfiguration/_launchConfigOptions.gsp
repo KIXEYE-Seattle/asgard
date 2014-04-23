@@ -23,23 +23,33 @@
       <h2>Launch ${templateType ?: 'Configuration'}</h2>
     </td>
   </tr>
-  <tr class="prop">
+<tr class="prop">
     <td class="name">
-      <label for="imageId">AMI Image ID:</label>
+        <label for="associatePublicIpAddress">Associate Public IP Address:</label>
     </td>
     <td>
-      <select id="imageId" name="imageId" data-placeholder="-Image Id-">
-        <option value=""></option>
-        <g:each var="im" in="${images}">
-          <option value="${im.imageId}" ${params.imageId == im.imageId || im.imageId == image ? "selected" : ""}>${im.imageLocation} | ${im.imageId}</option>
-        </g:each>
-      </select>
-      <br/>
-      <g:if test="${imageListIsShort}">
-        <g:link action="${actionName}" params="[id: name, allImages: true]" class="more">Show more AMIs</g:link>
-      </g:if>
+        <div>
+            <g:checkBox name="associatePublicIpAddress" id="associatePublicIpAddress" value="true" checked="${associatePublicIpAddress}"/>
+        </div>
     </td>
-  </tr>
+</tr>
+<tr class="prop">
+    <td class="name">
+        <label for="imageId">AMI Image ID:</label>
+    </td>
+    <td>
+        <select id="imageId" name="imageId" data-placeholder="-Image Id-">
+            <option value=""></option>
+            <g:each var="im" in="${images}">
+                <option value="${im.imageId}" ${params.imageId == im.imageId || im.imageId == image ? "selected" : ""}>${im.imageLocation} | ${im.imageId}</option>
+            </g:each>
+        </select>
+        <br/>
+        <g:if test="${imageListIsShort}">
+            <g:link action="${actionName}" params="[id: name, allImages: true]" class="more">Show more AMIs</g:link>
+        </g:if>
+    </td>
+</tr>
   <g:render template="/launchConfiguration/instanceTypeSelect" model="[rowClass: 'advanced']"/>
   <tr class="prop advanced">
     <td class="name">

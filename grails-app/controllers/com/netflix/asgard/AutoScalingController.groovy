@@ -162,7 +162,7 @@ class AutoScalingController {
             Boolean showPostponeButton = dayAfterExpire &&
                     new Duration(Time.now(), dayAfterExpire).isShorterThan(maxExpirationDuration)
             String lcName = groupData?.launchConfigurationName
-            LaunchConfiguration launchConfig = awsAutoScalingService.getLaunchConfiguration(userContext, lcName)
+             LaunchConfiguration launchConfig = awsAutoScalingService.getLaunchConfiguration(userContext, lcName)
             Image image = awsEc2Service.getImage(userContext, launchConfig?.imageId, From.CACHE)
             List<GroupIdentifier> securityGroups = awsEc2Service.getSecurityGroupNameIdPairsByNamesOrIds(userContext,
                     launchConfig?.securityGroups)
@@ -200,7 +200,8 @@ class AutoScalingController {
                     subnetPurpose: subnetPurpose ?: null,
                     vpcZoneIdentifier: group.VPCZoneIdentifier,
                     isChaosMonkeyActive: isChaosMonkeyActive,
-                    chaosMonkeyEditLink: cloudReadyService.constructChaosMonkeyEditLink(userContext.region, appName)
+                    chaosMonkeyEditLink: cloudReadyService.constructChaosMonkeyEditLink(userContext.region, appName),
+                    associatePublicIpAddress: launchConfig.getAssociatePublicIpAddress() ? 'Yes' : 'No'
             ]
             withFormat {
                 html { return details }
@@ -345,11 +346,13 @@ class AutoScalingController {
             boolean ebsOptimized = params.ebsOptimized?.toBoolean()
             boolean enableMonitoring = params.enableInstanceMonitoring ? params.enableInstanceMonitoring.toBoolean() :
                     configService.enableInstanceMonitoring
+            boolean associatePublicIpAddress = params.associatePublicIpAddress?.toBoolean()
             LaunchConfiguration launchConfigTemplate = new LaunchConfiguration().withImageId(imageId).
                     withKernelId(kernelId).withInstanceType(instType).withKeyName(keyName).withRamdiskId(ramdiskId).
                     withSecurityGroups(securityGroups).withIamInstanceProfile(iamInstanceProfile).
-                    withEbsOptimized(ebsOptimized).withInstanceMonitoring(new InstanceMonitoring()
-                        .withEnabled(enableMonitoring))
+                    withEbsOptimized(ebsOptimized).
+                    withInstanceMonitoring(new InstanceMonitoring().withEnabled(enableMonitoring)).
+                    withAssociatePublicIpAddress(associatePublicIpAddress)
             if (params.pricing == InstancePriceType.SPOT.name()) {
                 launchConfigTemplate.spotPrice = spotInstanceRequestService.recommendSpotPrice(userContext, instType)
             }

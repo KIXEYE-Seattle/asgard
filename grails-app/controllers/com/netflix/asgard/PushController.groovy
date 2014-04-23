@@ -79,6 +79,7 @@ class PushController {
         Integer concurrentRelaunches = params.concurrentRelaunches?.toInteger() ?: 1
         relaunchCount = Ensure.bounded(0, relaunchCount, group.instances.size())
         concurrentRelaunches = Ensure.bounded(0, concurrentRelaunches, relaunchCount)
+        boolean associatePublicIpAddress = params.associatePublicIpAddress?.toBoolean()
 
         RollingPushOptions pushOptions = new RollingPushOptions(
                 common: new CommonPushOptions(
@@ -98,7 +99,8 @@ class PushController {
                 concurrentRelaunches: concurrentRelaunches,
                 rudeShutdown: params.containsKey('rudeShutdown'),
                 iamInstanceProfile: params.iamInstanceProfile,
-                keyName: params.keyName
+                keyName: params.keyName,
+                associatePublicIpAddress: associatePublicIpAddress
         )
 
         try {

@@ -115,7 +115,7 @@ class RollingPushOperation extends AbstractPushOperation {
                 launchConfigurationName: newLaunchName, imageId: options.imageId, keyName: options.keyName,
                 securityGroups: securityGroups, instanceType: options.instanceType,
                 kernelId: oldLaunch.kernelId, ramdiskId: oldLaunch.ramdiskId, iamInstanceProfile: iamInstanceProfile,
-                ebsOptimized: oldLaunch.ebsOptimized
+                ebsOptimized: oldLaunch.ebsOptimized, associatePublicIpAddress: options.associatePublicIpAddress
         )
         UserContext userContext = options.common.userContext
         Subnets subnets = awsEc2Service.getSubnets(userContext)

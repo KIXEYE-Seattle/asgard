@@ -45,6 +45,7 @@ import groovy.transform.Immutable
     String ramdiskId
     String iamInstanceProfile
     String keyName
+    Boolean associatePublicIpAddress
 
     def propertyMissing(String name) { common[name] }
 }
