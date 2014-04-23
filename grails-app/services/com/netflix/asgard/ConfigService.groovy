@@ -204,6 +204,95 @@ class ConfigService {
     }
 
     /**
+     * Gets the port on which an Asgard instance is serving traffic directly.
+     * <p>
+     * This is useful for cases like constructing a health check URL to report to Eureka Server, because checking the
+     * health of a server is a case where the specific instance needs to accessed directly instead of through an
+     * external router or load balancer.
+     *
+     * @return the port that other systems should use when calling an Asgard instance directly, defaulting to 80
+     */
+    Integer getLocalInstancePort() {
+        grailsApplication.config.server?.localInstancePort ?: 80
+    }
+
+    /**
+     * Gets the virtual host name, or "virtual IP" or "VIP", that the system should use to override the default virtual
+     * host name in Eureka client when registering with Eureka service.
+     *
+     * It's common for the VIP to be in the form <name>:<port> such as
+     * asgard-prod:7001
+     *
+     * @return the virtual host name override to use, or null if not configured
+     * @see com.netflix.asgard.eureka.EurekaClientHolder#createEurekaInstanceConfig()
+     * @see com.netflix.appinfo.EurekaInstanceConfig#getVirtualHostName()
+     */
+    String getLocalVirtualHostName() {
+        grailsApplication.config.eureka?.localVirtualHostName ?: null
+    }
+
+    /**
+     * Gets the URL to use for Eureka Client to register with Eureka Service if the availability zone where the system
+     * is currently running does not have a zone entry anywhere in the values of regionToEurekaServiceAvailabilityZones.
+     *
+     * Example output:
+     * http://us-west-1.discoverytest.example.com:7001/eureka/v2/
+     *
+     * @return the default Eureka Service URL for Eureka Client to register with if no zone-specific matches exist
+     */
+    String getEurekaDefaultRegistrationUrl() {
+        grailsApplication.config.eureka?.defaultRegistrationUrl ?: null
+    }
+
+    /**
+     * Example output:
+     * <pre>
+     * {@code
+     * [
+     *     'us-east-1': ['us-east-1a', 'us-east-1c', 'us-east-1d', 'us-east-1e'],
+     *     'us-west-1': ['us-west-1a', 'us-west-1b', 'us-west-1c'],
+     *     'us-west-2': ['us-west-2a', 'us-west-2b', 'us-west-2c'],
+     *     'eu-west-1': ['eu-west-1a', 'eu-west-1b', 'us-west-1c'],
+     * ]
+     * }
+     * </pre>
+     *
+     * @return a map of region names like 'us-west-1' to list of availability zones in that region where Eureka service
+     *          is running, such as ['us-west-1a', 'us-west-1b']
+     */
+    Map<String, List<String>> getEurekaZoneListsByRegion() {
+        grailsApplication.config.eureka?.zoneListsByRegion ?: [:]
+    }
+
+    /**
+     * Gets the template string for constructing a URL to access Eureka Server from Eureka Client. If the template
+     * contains any of the following strings they will be replaced by the availability zone, region, or environment name
+     * of a Eureka Server node.
+     * <p>
+     * <pre>
+     * {@code
+     *
+     * ${zone} - the availability zone listed as a value for a region in the {@link #getEurekaZoneListsByRegion} map
+     * ${region} - the region listed as a key for the zone in the {@link #getEurekaZoneListsByRegion} map
+     * ${env} - the environment name from {@link #getAccountName}
+     *
+     * Examples:
+     * http://${zone}.${region}.eureka{env}.example:7001/eureka/v2/
+     * http://${region}.eureka{env}.example:7001/eureka/v2/
+     * http://eureka.example:7001/eureka/v2/
+     *
+     * }
+     * </pre>
+     * <p>
+     *
+     * @see com.netflix.asgard.eureka.AsgardEurekaClientConfig#getEurekaServerServiceUrls
+     * @return the configured template for constructing a Eureka Server endpoint
+     */
+    String getEurekaUrlTemplateForZoneRegionEnv() {
+        grailsApplication.config.eureka?.urlTemplateForZoneRegionEnv ?: null
+    }
+
+    /**
      * @return the short label that should be displayed in reference to the change control ticket for cloud changes
      */
     String getTicketLabel() {
@@ -379,6 +468,13 @@ class ConfigService {
      */
     boolean isOnline() {
         grailsApplication.config.server.online
+    }
+
+    /**
+     * @return a map of deprecated server names to new canonical server names, or an empty map if not configured
+     */
+    Map<String, String> getDeprecatedServerNamesToReplacements() {
+        grailsApplication.config.server?.deprecatedServerNamesToReplacements ?: [:]
     }
 
     /**
@@ -829,6 +925,14 @@ class ConfigService {
      */
     String getFastPropertyInfoUrl() {
         grailsApplication.config.platform?.fastPropertyInfoUrl ?: ''
+    }
+
+    /**
+     * @return boolean representing enabled instance monitoring. By default, AWS enables detailed instance
+     * monitoring; you must explicitly turn it off
+     */
+    boolean getEnableInstanceMonitoring() {
+        grailsApplication.config.cloud?.launchConfig?.enableInstanceMonitoring ?: false
     }
 
     /**

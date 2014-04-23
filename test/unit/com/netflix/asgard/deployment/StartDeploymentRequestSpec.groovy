@@ -47,8 +47,10 @@ class StartDeploymentRequestSpec extends Specification {
                     instanceType: "m1.large",
                     kernelId: "123",
                     ramdiskId: "abc",
+                    instanceMonitoringIsEnabled: false,
                     instancePriceType: "ON_DEMAND",
                     iamInstanceProfile: "BaseIAMRole",
+                    associatePublicIpAddress: false,
                     ebsOptimized: true),
             new AutoScalingGroupBeanOptions(
                     minSize: 1,
@@ -74,8 +76,8 @@ class StartDeploymentRequestSpec extends Specification {
             '"lcOverrides":{"launchConfigurationName":null,"imageId":"ami-12345678",' +
             '"keyName":"nf-test-keypair-a","securityGroups":["sg-12345678"],' +
             '"userData":"#!/bin/bash","instanceType":"m1.large","kernelId":"123","ramdiskId":"abc",' +
-            '"blockDeviceMappings":null,"instanceMonitoring":null,"instancePriceType":"ON_DEMAND",' +
-            '"iamInstanceProfile":"BaseIAMRole","ebsOptimized":true},' +
+            '"blockDeviceMappings":null,"instanceMonitoringIsEnabled":false,"instancePriceType":"ON_DEMAND",' +
+            '"iamInstanceProfile":"BaseIAMRole","ebsOptimized":true,"associatePublicIpAddress":false},' +
 
             '"asgOverrides":{"autoScalingGroupName":null,"launchConfigurationName":null,"minSize":1,"maxSize":3,' +
             '"desiredCapacity":2,"defaultCooldown":10,"availabilityZones":["us-west-1a"],' +
@@ -92,5 +94,18 @@ class StartDeploymentRequestSpec extends Specification {
     void 'should convert JSON to a StartDeploymentRequest'() {
         expect:
         startDeploymentRequest == mapper.reader(StartDeploymentRequest).readValue(json)
+    }
+
+    void 'should return no errors for valid request'() {
+        expect:
+        startDeploymentRequest.validationErrors == []
+    }
+
+    void 'should return errors for invalid capacity bounds'() {
+        startDeploymentRequest.asgOverrides.maxSize = 1
+        expect:
+        startDeploymentRequest.validationErrors == [
+                "Resize ASG capacity '2' is greater than the ASG's maximum instance bound '1'."
+        ]
     }
 }
